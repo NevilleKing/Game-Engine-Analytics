@@ -1,5 +1,8 @@
 #include <iostream>
+#include "GL\glew.h"
 #include "SDL.h"
+#include "glm\glm.hpp"
+
 int main(int argc, char* argv[])
 {
 	//send HelloWorld! to console output
@@ -11,4 +14,4 @@ int main(int argc, char* argv[])
 	}
 	SDL_Log("SDL initialised OK!\n");
 	return 0;
-}
+}
