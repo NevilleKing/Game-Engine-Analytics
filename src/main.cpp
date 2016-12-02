@@ -15,6 +15,10 @@
 
 #include <GL/glew.h>
 #include <SDL.h>
+
+// custom classes
+#include "LogFile.h"
+
 // end::includes[]
 
 // tag::using[]
@@ -418,6 +422,13 @@ void cleanUp()
 int main(int argc, char* args[])
 {
 	exeName = args[0];
+
+	// log file path
+	if (argc < 2)
+		exit(1);
+	std::string logPath = args[1];
+	std::cout << logPath << std::endl;
+
 	//setup
 	//- do just once
 	initialise();
