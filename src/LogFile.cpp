@@ -14,7 +14,7 @@ LogFile::LogFile(std::string FileName)
 	std::string line;
 	while (std::getline(theFile, line))
 	{
-		// TODO: Parse Line Here
+		data.push_back(line);
 	}
 
 	// close the file
