@@ -431,6 +431,12 @@ int main(int argc, char* args[])
 
 	LogFile lf = LogFile(logPath);
 
+	if (lf.getStatus() == LogFile::STATUS_ERROR)
+	{
+		// handle error
+		std::cout << "Error parsing log file" << std::endl;
+	}
+
 	//setup
 	//- do just once
 	initialise();

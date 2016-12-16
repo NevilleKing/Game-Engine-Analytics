@@ -2,26 +2,30 @@
 
 LogFile::LogFile(std::string FileName)
 {
-	// open the file
-	std::ifstream theFile;
-	theFile.open(FileName);
-	
-	// error checking
-	if (!theFile.is_open())
-		return;
-
-	// read each line one by one
-	std::string line;
-	while (std::getline(theFile, line))
+	try
 	{
-		data.push_back(line);
+		// open the file
+		std::ifstream theFile;
+		theFile.open(FileName);
+
+		// error checking
+		if (!theFile.is_open())
+			return;
+
+		// read each line one by one
+		std::string line;
+		while (std::getline(theFile, line))
+		{
+			_data.push_back(line);
+		}
+
+		// close the file
+		theFile.close();
+
+		// run the parsing function
+		parseData();
 	}
-
-	// close the file
-	theFile.close();
-
-	// run the parsing function
-	parseData();
+	catch (int e) {}
 }
 
 LogFile::~LogFile()
@@ -30,8 +34,8 @@ LogFile::~LogFile()
 
 void LogFile::parseData()
 {
-	// loop through all the data in the 'data' vector
-	for (auto line : data)
+	// loop through all the data in the '_data' vector
+	for (auto line : _data)
 	{
 		// data is in the format x,y,z on each line
 		// covert the string to a string stream (required by getline function)
@@ -53,4 +57,7 @@ void LogFile::parseData()
 		// save to points vector
 		points.push_back(position);
 	}
+
+	// change status
+	_status = LogFileStatus::STATUS_OK;
 }
