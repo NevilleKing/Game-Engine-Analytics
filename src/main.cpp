@@ -424,10 +424,9 @@ int main(int argc, char* args[])
 	exeName = args[0];
 
 	// log file path
-	//if (argc < 2)
-	//	exit(1);
-	std::string logPath = "C:\\Users\\Computing\\Documents\\GitHub\\BatteryCollector\\BatteryCollector\\logbatterycollector.log";
-	std::cout << logPath << std::endl;
+	if (argc < 2)
+		exit(1);
+	std::string logPath = args[1];
 
 	LogFile lf = LogFile(logPath);
 

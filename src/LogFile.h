@@ -17,7 +17,7 @@ public:
 
 	LogFileStatus getStatus() { return _status; };
 private:
-	std::vector<std::string> _data;
+	std::vector<std::string>* _data;
 	std::vector<glm::vec3> points;
 
 	// defined as error until complete

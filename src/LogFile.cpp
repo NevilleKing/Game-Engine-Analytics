@@ -4,6 +4,9 @@ LogFile::LogFile(std::string FileName)
 {
 	try
 	{
+		// create data pointer
+		_data = new std::vector<std::string>;
+
 		// open the file
 		std::ifstream theFile;
 		theFile.open(FileName);
@@ -16,7 +19,7 @@ LogFile::LogFile(std::string FileName)
 		std::string line;
 		while (std::getline(theFile, line))
 		{
-			_data.push_back(line);
+			_data->push_back(line);
 		}
 
 		// close the file
@@ -25,17 +28,22 @@ LogFile::LogFile(std::string FileName)
 		// run the parsing function
 		parseData();
 	}
-	catch (int e) {}
+	catch (int e) 
+	{
+		delete _data;
+	}
 }
 
 LogFile::~LogFile()
 {
+	if (_data != nullptr)
+		delete _data;
 }
 
 void LogFile::parseData()
 {
 	// loop through all the data in the '_data' vector
-	for (auto line : _data)
+	for (auto line : *_data)
 	{
 		// data is in the format x,y,z on each line
 		// covert the string to a string stream (required by getline function)
@@ -57,6 +65,10 @@ void LogFile::parseData()
 		// save to points vector
 		points.push_back(position);
 	}
+
+
+	// free up data
+	delete _data;
 
 	// change status
 	_status = LogFileStatus::STATUS_OK;
