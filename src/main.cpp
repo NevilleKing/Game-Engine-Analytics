@@ -317,6 +317,12 @@ void loadAssets()
 // end::loadAssets[]
 
 // tag::handleInput[]
+void handleDropEvent(char* filePath) 
+{
+	// When the user drops a file onto the window, this function is called
+	std::cout << "File dropped: " << filePath << std::endl;
+}
+
 void handleInput()
 {
 	//Event-based input handling
@@ -353,6 +359,12 @@ void handleInput()
 					//hit escape to exit
 				case SDLK_ESCAPE: done = true;
 				}
+			break;
+			// Dropped file handling
+		case SDL_DROPFILE:
+			char* drop_file_dir = event.drop.file;
+			handleDropEvent(drop_file_dir);
+			SDL_free(drop_file_dir);    // Free dropped_filedir memory
 			break;
 		}
 	}
