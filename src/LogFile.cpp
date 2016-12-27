@@ -30,7 +30,7 @@ LogFile::LogFile(std::string FileName)
 	}
 	catch (int e) 
 	{
-		delete _data;
+		deleteData();
 	}
 }
 
@@ -68,8 +68,14 @@ void LogFile::parseData()
 
 
 	// free up data
-	delete _data;
+	deleteData();
 
 	// change status
 	_status = LogFileStatus::STATUS_OK;
+}
+
+void LogFile::deleteData()
+{
+	delete _data;
+	_data = 0; // set to NULL
 }

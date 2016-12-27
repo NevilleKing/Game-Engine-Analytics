@@ -24,5 +24,7 @@ private:
 	LogFileStatus _status = STATUS_ERROR;
 	
 	void parseData();
+
+	void deleteData();
 };
 
