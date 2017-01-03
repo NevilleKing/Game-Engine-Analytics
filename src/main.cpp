@@ -18,6 +18,7 @@
 
 // custom classes
 #include "LogFile.h"
+#include "Line.h"
 
 // end::includes[]
 
@@ -36,6 +37,8 @@ SDL_Window *win; //pointer to the SDL_Window
 SDL_GLContext context; //the SDL_GLContext
 int frameCount = 0;
 std::string frameLine = "";
+
+std::vector<glm::vec2> lines;
 // end::globalVariables[]
 
 // tag::vertexShader[]
@@ -66,14 +69,6 @@ const std::string strFragmentShader = R"(
 // tag::ourVariables[]
 //our variables
 bool done = false;
-
-//the data about our geometry
-const GLfloat vertexData[] = {
-	//	X			Y
-	0.000f,	0.500f,
-	-0.433f,	-0.250f,
-	0.433f,	-0.250f,
-};
 
 //the color we'll pass to the GLSL
 GLfloat color[] = { 1.0f, 1.0f, 1.0f }; //using different values from CPU and static GLSL examples, to make it clear this is working
@@ -297,7 +292,7 @@ void initializeVertexBuffer()
 	glGenBuffers(1, &vertexDataBufferObject);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(lines), &lines[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	cout << "vertexDataBufferObject created OK! GLUint is: " << vertexDataBufferObject << std::endl;
 
@@ -402,7 +397,10 @@ void render()
 
 	glBindVertexArray(vertexArrayObject);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3); //Draw something, using Triangles, and 3 vertices - i.e. one lonely triangle
+	for (int i = 0; i < lines.size(); i++)
+	{
+		glDrawArrays(GL_LINES, i * 2, 2); //Draw something, using Triangles, and 3 vertices - i.e. one lonely triangle
+	}
 
 	glBindVertexArray(0);
 
@@ -433,6 +431,10 @@ void cleanUp()
 // tag::main[]
 int main(int argc, char* args[])
 {
+	// TEST LINES
+	lines.push_back(glm::vec2(0, 0));
+	lines.push_back(glm::vec2(0.5, 0.5));
+
 	exeName = args[0];
 
 	// log file path
@@ -447,6 +449,8 @@ int main(int argc, char* args[])
 		// handle error
 		std::cout << "Error parsing log file" << std::endl;
 	}
+
+	lines = lf.getData();
 
 	//setup
 	//- do just once

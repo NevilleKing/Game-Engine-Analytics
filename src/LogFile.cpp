@@ -59,8 +59,12 @@ void LogFile::parseData()
 			vecs[i++] = ::atof(split_value.c_str()); // http://stackoverflow.com/questions/1012571/stdstring-to-float-or-double
 		}
 
+		// TEST
+		float xValue = ((vecs[0] - 100.f) / 3500.f);
+		float yValue = ((vecs[1] + 1000.f) / 2000.0f);
+
 		// construct a glm vec3 object
-		glm::vec3 position(vecs[0], vecs[1], vecs[2]);
+		glm::vec2 position(xValue, yValue);
 
 		// save to points vector
 		points.push_back(position);

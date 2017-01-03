@@ -16,9 +16,11 @@ public:
 	enum LogFileStatus { STATUS_OK, STATUS_ERROR };
 
 	LogFileStatus getStatus() { return _status; };
+
+	std::vector<glm::vec2> getData() { return points; };
 private:
 	std::vector<std::string>* _data;
-	std::vector<glm::vec3> points;
+	std::vector<glm::vec2> points;
 
 	// defined as error until complete
 	LogFileStatus _status = STATUS_ERROR;
