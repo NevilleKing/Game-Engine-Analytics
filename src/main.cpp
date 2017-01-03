@@ -397,9 +397,9 @@ void render()
 
 	glBindVertexArray(vertexArrayObject);
 
-	for (int i = 0; i < lines.size(); i++)
+	for (int i = 0; i < lines.size() - 1; i++)
 	{
-		glDrawArrays(GL_LINES, i * 2, 2); //Draw something, using Triangles, and 3 vertices - i.e. one lonely triangle
+		glDrawArrays(GL_LINES, i, 2); //Draw something, using Triangles, and 3 vertices - i.e. one lonely triangle
 	}
 
 	glBindVertexArray(0);
