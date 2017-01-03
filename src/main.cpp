@@ -16,6 +16,10 @@
 #include <GL/glew.h>
 #include <SDL.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 // custom classes
 #include "LogFile.h"
 #include "Line.h"
@@ -46,9 +50,13 @@ std::vector<glm::vec2> lines;
 const std::string strVertexShader = R"(
 	#version 330
 	in vec2 position;
+
+	uniform mat4 modelMatrix      = mat4(1.0);
+	uniform mat4 viewMatrix       = mat4(1.0);
+	uniform mat4 projectionMatrix = mat4(1.0);
 	void main()
 	{
-		 gl_Position = vec4(position, 0.0, 1.0);
+		 gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 0.0, 1.0);
 	}
 )";
 // end::vertexShader[]
@@ -78,6 +86,8 @@ GLfloat color[] = { 1.0f, 1.0f, 1.0f }; //using different values from CPU and st
 GLuint theProgram; //GLuint that we'll fill in to refer to the GLSL program (only have 1 at this point)
 GLint positionLocation; //GLuint that we'll fill in with the location of the `position` attribute in the GLSL
 GLint colorLocation; //GLuint that we'll fill in with the location of the `color` variable in the GLSL
+
+GLint projectionMatrixLocation; // location of the projection matrix in the GLSL
 
 GLuint vertexDataBufferObject;
 GLuint vertexArrayObject;
@@ -256,6 +266,7 @@ void initializeProgram()
 	}
 
 	positionLocation = glGetAttribLocation(theProgram, "position");
+	projectionMatrixLocation = glGetUniformLocation(theProgram, "projectionMatrix");
 	colorLocation = glGetUniformLocation(theProgram, "color");
 	//clean up shaders (we don't need them anymore as they are no in theProgram
 	for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
@@ -394,6 +405,9 @@ void render()
 	glUniform3f(colorLocation, color[0], color[1], color[2]);
 	//alternatively, use glUnivform2fv
 	//glUniform2fv(colorLocation, 1, color); //Note: the count is 1, because we are setting a single uniform vec2 - https://www.opengl.org/wiki/GLSL_:_common_mistakes#How_to_use_glUniform
+
+	glm::mat4 projectionMatrix = glm::ortho(100.0f, 3200.0f, -700.0f, 800.0f);
+	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
 	glBindVertexArray(vertexArrayObject);
 
