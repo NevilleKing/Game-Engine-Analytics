@@ -338,6 +338,19 @@ void handleDropEvent(char* filePath)
 	std::cout << "File dropped: " << filePath << std::endl;
 }
 
+void zoomIn()
+{
+	zoomScale += 0.1f;
+}
+
+void zoomOut()
+{
+	if ((zoomScale - 0.1f) > 0.0f)
+	{
+		zoomScale -= 0.1f;
+	}
+}
+
 void handleInput()
 {
 	//Event-based input handling
@@ -384,13 +397,10 @@ void handleInput()
 						lineWidth += 1.f;
 					break;
 				case SDLK_MINUS:
-					if ((zoomScale - 0.1f) > 0.0f)
-					{
-						zoomScale -= 0.1f;
-					}
+					zoomOut();
 					break;
 				case SDLK_EQUALS:
-					zoomScale += 0.1f;
+					zoomIn();
 					break;
 				}
 			break;
@@ -404,6 +414,8 @@ void handleInput()
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			mouseDown = true;
+			if (event.button.clicks == 2)
+				zoomIn();
 			break;
 		case SDL_MOUSEBUTTONUP:
 			mouseDown = false;
