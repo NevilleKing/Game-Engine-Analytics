@@ -120,7 +120,7 @@ void createWindow()
 	const char *exeNameCStr = exeNameEnd.c_str();
 
 	//create window
-	win = SDL_CreateWindow(exeNameCStr, 100, 100, 600, 600, SDL_WINDOW_OPENGL); //same height and width makes the window square ...
+	win = SDL_CreateWindow(exeNameCStr, 100, 100, 1000, 600, SDL_WINDOW_OPENGL); //same height and width makes the window square ...
 
 																				//error handling
 	if (win == nullptr)
@@ -390,7 +390,7 @@ void updateSimulation(double simLength = 0.02) //update simulation with an amoun
 // tag::preRender[]
 void preRender()
 {
-	glViewport(0, 0, 600, 600); //set viewpoint
+	glViewport(0, 0, 1000, 600); //set viewpoint
 	glClearColor(1.0f, 0.0f, 0.0f, 1.0f); //set clear colour
 	glClear(GL_COLOR_BUFFER_BIT); //clear the window (technical the scissor box bounds)
 }
@@ -406,7 +406,7 @@ void render()
 	//alternatively, use glUnivform2fv
 	//glUniform2fv(colorLocation, 1, color); //Note: the count is 1, because we are setting a single uniform vec2 - https://www.opengl.org/wiki/GLSL_:_common_mistakes#How_to_use_glUniform
 
-	glm::mat4 projectionMatrix = glm::ortho(100.0f, 3200.0f, -700.0f, 800.0f);
+	glm::mat4 projectionMatrix = glm::ortho(-1000.0f, 4000.0f, -1700.0f, 2300.0f);
 	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
 	glBindVertexArray(vertexArrayObject);
@@ -475,7 +475,7 @@ int main(int argc, char* args[])
 
 	initGlew();
 
-	glViewport(0, 0, 600, 600); //should check what the actual window res is?
+	glViewport(0, 0, 1000, 600); //should check what the actual window res is?
 
 	SDL_GL_SwapWindow(win); //force a swap, to make the trace clearer
 
