@@ -92,6 +92,8 @@ GLint projectionMatrixLocation; // location of the projection matrix in the GLSL
 GLuint vertexDataBufferObject;
 GLuint vertexArrayObject;
 
+GLfloat lineWidth = 1.0f;
+
 // end::ourVariables[]
 
 
@@ -363,7 +365,17 @@ void handleInput()
 				switch (event.key.keysym.sym)
 				{
 					//hit escape to exit
-				case SDLK_ESCAPE: done = true;
+				case SDLK_ESCAPE: 
+					done = true;
+					break;
+				case SDLK_LEFTBRACKET:
+					if (lineWidth > 1.0f) // min width
+						lineWidth -= 1.f;
+					break;
+				case SDLK_RIGHTBRACKET: 
+					if (lineWidth < 7.0f) // max width
+						lineWidth += 1.f;
+					break;
 				}
 			break;
 			// Dropped file handling
@@ -408,6 +420,9 @@ void render()
 
 	glm::mat4 projectionMatrix = glm::ortho(-1000.0f, 4000.0f, -1700.0f, 2300.0f);
 	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+	// set the line width based on our variable
+	glLineWidth(lineWidth);
 
 	glBindVertexArray(vertexArrayObject);
 
