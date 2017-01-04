@@ -94,6 +94,10 @@ GLuint vertexArrayObject;
 
 GLfloat lineWidth = 1.0f;
 
+// for dragging stuff
+bool mouseDown = false;
+glm::vec2 offsetVector = glm::vec2(0.0f, 0.0f);
+
 // end::ourVariables[]
 
 
@@ -380,9 +384,21 @@ void handleInput()
 			break;
 			// Dropped file handling
 		case SDL_DROPFILE:
+		{
 			char* drop_file_dir = event.drop.file;
 			handleDropEvent(drop_file_dir);
 			SDL_free(drop_file_dir);    // Free dropped_filedir memory
+		}
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			mouseDown = true;
+			break;
+		case SDL_MOUSEBUTTONUP:
+			mouseDown = false;
+			break;
+		case SDL_MOUSEMOTION:
+			if (mouseDown)
+				offsetVector += glm::vec2(event.motion.xrel, -event.motion.yrel);
 			break;
 		}
 	}
@@ -419,6 +435,7 @@ void render()
 	//glUniform2fv(colorLocation, 1, color); //Note: the count is 1, because we are setting a single uniform vec2 - https://www.opengl.org/wiki/GLSL_:_common_mistakes#How_to_use_glUniform
 
 	glm::mat4 projectionMatrix = glm::ortho(-1000.0f, 4000.0f, -1700.0f, 2300.0f);
+	projectionMatrix = glm::translate(projectionMatrix, glm::vec3(offsetVector, 0.0f));
 	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
 	// set the line width based on our variable
