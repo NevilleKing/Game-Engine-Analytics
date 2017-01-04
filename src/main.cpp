@@ -98,6 +98,9 @@ GLfloat lineWidth = 1.0f;
 bool mouseDown = false;
 glm::vec2 offsetVector = glm::vec2(0.0f, 0.0f);
 
+// scale of map (for zooming)
+GLfloat zoomScale = 1.0f;
+
 // end::ourVariables[]
 
 
@@ -380,6 +383,15 @@ void handleInput()
 					if (lineWidth < 7.0f) // max width
 						lineWidth += 1.f;
 					break;
+				case SDLK_MINUS:
+					if ((zoomScale - 0.1f) > 0.0f)
+					{
+						zoomScale -= 0.1f;
+					}
+					break;
+				case SDLK_EQUALS:
+					zoomScale += 0.1f;
+					break;
 				}
 			break;
 			// Dropped file handling
@@ -398,7 +410,7 @@ void handleInput()
 			break;
 		case SDL_MOUSEMOTION:
 			if (mouseDown)
-				offsetVector += glm::vec2(event.motion.xrel, -event.motion.yrel);
+				offsetVector += glm::vec2(event.motion.xrel, -event.motion.yrel) * 2.0f;
 			break;
 		}
 	}
@@ -435,6 +447,9 @@ void render()
 	//glUniform2fv(colorLocation, 1, color); //Note: the count is 1, because we are setting a single uniform vec2 - https://www.opengl.org/wiki/GLSL_:_common_mistakes#How_to_use_glUniform
 
 	glm::mat4 projectionMatrix = glm::ortho(-1000.0f, 4000.0f, -1700.0f, 2300.0f);
+	// scale the map (zoom)
+	projectionMatrix = glm::scale(projectionMatrix, glm::vec3(zoomScale, zoomScale, 0.0f));
+	// move the map to the offset location (where the user has moved it to)
 	projectionMatrix = glm::translate(projectionMatrix, glm::vec3(offsetVector, 0.0f));
 	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
