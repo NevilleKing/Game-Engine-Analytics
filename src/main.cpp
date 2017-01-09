@@ -88,8 +88,8 @@ GLint colorLocation; //GLuint that we'll fill in with the location of the `color
 
 GLint projectionMatrixLocation; // location of the projection matrix in the GLSL
 
-GLuint vertexDataBufferObjects[1];
-GLuint vertexArrayObjects[1];
+GLuint vertexDataBufferObjects[2];
+GLuint vertexArrayObjects[2];
 
 GLfloat lineWidth = 1.0f;
 
@@ -318,7 +318,7 @@ void initializeVertexBuffer()
 	for (int i = 0; i < logFiles.size(); i++)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObjects[i]);
-		glBufferData(GL_ARRAY_BUFFER, logFiles[i]->getDataSize() * sizeof(logFiles[i]->getData()), &logFiles[i]->getData()[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, logFiles[i]->getDataSize() * sizeof(&logFiles[i]->getData()), &logFiles[i]->getData()[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		cout << "vertexDataBufferObject created OK! GLUint is: " << vertexDataBufferObjects[i] << std::endl;
 	}
@@ -519,7 +519,7 @@ int main(int argc, char* args[])
 	// loop through arguments loading in the log files
 	for (int i = 1; i < argc; i++)
 	{
-		std::string logPath = args[1];
+		std::string logPath = args[i];
 
 		LogFile* lf = new LogFile(logPath);
 
