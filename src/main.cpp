@@ -22,7 +22,6 @@
 
 // custom classes
 #include "LogFile.h"
-#include "Line.h"
 
 // end::includes[]
 
@@ -504,10 +503,6 @@ void cleanUp()
 // tag::main[]
 int main(int argc, char* args[])
 {
-	// TEST LINES
-	lines.push_back(glm::vec2(0, 0));
-	lines.push_back(glm::vec2(0.5, 0.5));
-
 	exeName = args[0];
 
 	// log file path
