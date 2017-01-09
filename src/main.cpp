@@ -289,20 +289,17 @@ void initializeProgram()
 
 // tag::initializeVertexArrayObject[]
 //setup a GL object (a VertexArrayObject) that stores how to access data and from where
-void initializeVertexArrayObject()
+void initializeVertexArrayObject(GLuint VDBO)
 {
-	// loop through and create all the vetex objects
-	for (int i = 0; i < logFiles.size(); i++)
-	{
 		GLuint VAO; // hold the current value for the VAO
 
 		glGenVertexArrays(1, &VAO); //create a Vertex Array Object
 
 		vertexArrayObjects.push_back(VAO); // add to the vector
 
-		glBindVertexArray(vertexArrayObjects[i]); //make the just created vertexArrayObject the active one
+		glBindVertexArray(VAO); //make the just created vertexArrayObject the active one
 
-		glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObjects[i]); //bind vertexDataBufferObject
+		glBindBuffer(GL_ARRAY_BUFFER, VDBO); //bind vertexDataBufferObject
 
 		glEnableVertexAttribArray(positionLocation); //enable attribute at index positionLocation
 
@@ -314,30 +311,26 @@ void initializeVertexArrayObject()
 		glDisableVertexAttribArray(positionLocation); //disable vertex attribute at index positionLocation
 		glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind array buffer
 
-		cout << "Vertex Array Object created OK! GLUint is: " << vertexArrayObjects[i] << std::endl;
-	}
+		cout << "Vertex Array Object created OK! GLUint is: " << VAO << std::endl;
 }
 // end::initializeVertexArrayObject[]
 
 // tag::initializeVertexBuffer[]
-void initializeVertexBuffer()
+GLuint initializeVertexBuffer(LogFile* lf)
 {
-	// loop through and create all the buffer objects
-	for (int i = 0; i < logFiles.size(); i++)
-	{
-		GLuint VDBO;
+	GLuint VDBO;
 
-		glGenBuffers(1, &VDBO);
+	glGenBuffers(1, &VDBO);
 
-		vertexDataBufferObjects.push_back(VDBO); // add to the vector
+	vertexDataBufferObjects.push_back(VDBO); // add to the vector
 
-		glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObjects[i]);
-		glBufferData(GL_ARRAY_BUFFER, logFiles[i]->getDataSize() * sizeof(&logFiles[i]->getData()), &logFiles[i]->getData()[0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		cout << "vertexDataBufferObject created OK! GLUint is: " << vertexDataBufferObjects[i] << std::endl;
-	}
-	
-	initializeVertexArrayObject();
+	glBindBuffer(GL_ARRAY_BUFFER, VDBO);
+	glBufferData(GL_ARRAY_BUFFER, lf->getDataSize() * sizeof(&lf->getData()), &lf->getData()[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	cout << "vertexDataBufferObject created OK! GLUint is: " << VDBO << std::endl;
+
+	// return the data
+	return VDBO;
 }
 // end::initializeVertexBuffer[]
 
@@ -346,7 +339,12 @@ void loadAssets()
 {
 	initializeProgram(); //create GLSL Shaders, link into a GLSL program, and get IDs of attributes and variables
 
-	initializeVertexBuffer(); //load data into a vertex buffer
+	// loop through and create all the vetex objects
+	for (auto lf : logFiles)
+	{
+		GLuint VAO = initializeVertexBuffer(lf); //load data into a vertex buffer
+		initializeVertexArrayObject(VAO);
+	}
 
 	cout << "Loaded Assets OK!\n";
 }
