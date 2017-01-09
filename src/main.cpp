@@ -41,7 +41,7 @@ SDL_GLContext context; //the SDL_GLContext
 int frameCount = 0;
 std::string frameLine = "";
 
-std::vector<glm::vec2> lines;
+std::vector<LogFile*> logFiles;
 // end::globalVariables[]
 
 // tag::vertexShader[]
@@ -88,8 +88,8 @@ GLint colorLocation; //GLuint that we'll fill in with the location of the `color
 
 GLint projectionMatrixLocation; // location of the projection matrix in the GLSL
 
-GLuint vertexDataBufferObject;
-GLuint vertexArrayObject;
+GLuint vertexDataBufferObjects[1];
+GLuint vertexArrayObjects[1];
 
 GLfloat lineWidth = 1.0f;
 
@@ -285,36 +285,44 @@ void initializeProgram()
 //setup a GL object (a VertexArrayObject) that stores how to access data and from where
 void initializeVertexArrayObject()
 {
-	glGenVertexArrays(1, &vertexArrayObject); //create a Vertex Array Object
-	cout << "Vertex Array Object created OK! GLUint is: " << vertexArrayObject << std::endl;
+	glGenVertexArrays(logFiles.size(), vertexArrayObjects); //create a Vertex Array Object
 
-	glBindVertexArray(vertexArrayObject); //make the just created vertexArrayObject the active one
+	// loop through and create all the vetex objects
+	for (int i = 0; i < logFiles.size(); i++)
+	{
+		glBindVertexArray(vertexArrayObjects[i]); //make the just created vertexArrayObject the active one
 
-	glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObject); //bind vertexDataBufferObject
+		glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObjects[i]); //bind vertexDataBufferObject
 
-	glEnableVertexAttribArray(positionLocation); //enable attribute at index positionLocation
+		glEnableVertexAttribArray(positionLocation); //enable attribute at index positionLocation
 
-	glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, 0); //specify that position data contains four floats per vertex, and goes into attribute index positionLocation
+		glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, 0); //specify that position data contains four floats per vertex, and goes into attribute index positionLocation
 
-	glBindVertexArray(0); //unbind the vertexArrayObject so we can't change it
+		glBindVertexArray(0); //unbind the vertexArrayObject so we can't change it
 
-						  //cleanup
-	glDisableVertexAttribArray(positionLocation); //disable vertex attribute at index positionLocation
-	glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind array buffer
+		//cleanup
+		glDisableVertexAttribArray(positionLocation); //disable vertex attribute at index positionLocation
+		glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind array buffer
 
+		cout << "Vertex Array Object created OK! GLUint is: " << vertexArrayObjects[i] << std::endl;
+	}
 }
 // end::initializeVertexArrayObject[]
 
 // tag::initializeVertexBuffer[]
 void initializeVertexBuffer()
 {
-	glGenBuffers(1, &vertexDataBufferObject);
+	glGenBuffers(logFiles.size(), vertexDataBufferObjects);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(lines), &lines[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	cout << "vertexDataBufferObject created OK! GLUint is: " << vertexDataBufferObject << std::endl;
-
+	// loop through and create all the buffer objects
+	for (int i = 0; i < logFiles.size(); i++)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObjects[i]);
+		glBufferData(GL_ARRAY_BUFFER, logFiles[i]->getData().size() * sizeof(logFiles[i]->getData()), &logFiles[i]->getData()[0], GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		cout << "vertexDataBufferObject created OK! GLUint is: " << vertexDataBufferObjects[i] << std::endl;
+	}
+	
 	initializeVertexArrayObject();
 }
 // end::initializeVertexBuffer[]
@@ -467,14 +475,17 @@ void render()
 	// set the line width based on our variable
 	glLineWidth(lineWidth);
 
-	glBindVertexArray(vertexArrayObject);
-
-	for (int i = 0; i < lines.size() - 1; i++)
+	for (int i = 0; i < logFiles.size(); i++)
 	{
-		glDrawArrays(GL_LINES, i, 2); //Draw something, using Triangles, and 3 vertices - i.e. one lonely triangle
-	}
+		glBindVertexArray(vertexArrayObjects[i]);
 
-	glBindVertexArray(0);
+		for (int j = 0; j < logFiles[i]->getData().size() - 1; j++)
+		{
+			glDrawArrays(GL_LINES, j, 2); //Draw something, using Triangles, and 3 vertices - i.e. one lonely triangle
+		}
+
+		glBindVertexArray(0);
+	}
 
 	glUseProgram(0); //clean up
 
@@ -505,20 +516,23 @@ int main(int argc, char* args[])
 {
 	exeName = args[0];
 
-	// log file path
-	if (argc < 2)
-		exit(1);
-	std::string logPath = args[1];
-
-	LogFile lf = LogFile(logPath);
-
-	if (lf.getStatus() == LogFile::STATUS_ERROR)
+	// loop through arguments loading in the log files
+	for (int i = 1; i < argc; i++)
 	{
-		// handle error
-		std::cout << "Error parsing log file" << std::endl;
-	}
+		std::string logPath = args[1];
 
-	lines = lf.getData();
+		LogFile* lf = new LogFile(logPath);
+
+		if (lf->getStatus() == LogFile::STATUS_ERROR)
+		{
+			// handle error
+			std::cout << "Error parsing log file" << std::endl;
+		}
+		else
+		{
+			logFiles.push_back(lf);
+		}
+	}
 
 	//setup
 	//- do just once
