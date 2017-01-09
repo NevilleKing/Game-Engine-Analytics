@@ -112,6 +112,33 @@ GLfloat zoomScale = 1.0f;
 // end Global Variables
 /////////////////////////
 
+LogFile* handleLogFileLoad(std::string path)
+{
+	LogFile* lf = new LogFile(path);
+
+	if (lf->getStatus() == LogFile::STATUS_ERROR)
+	{
+		// handle error
+		std::cout << "Error parsing log file" << std::endl;
+	}
+	else
+	{
+		// current log file index
+		int logIndex = logFiles.size();
+
+		// set the line colour
+		lf->lineColour[0] = lineColours[logIndex][0];
+		lf->lineColour[1] = lineColours[logIndex][1];
+		lf->lineColour[2] = lineColours[logIndex][2];
+
+		logFiles.push_back(lf);
+
+		return lf;
+	}
+
+	return nullptr;
+}
+
 // tag::initialise[]
 void initialise()
 {
@@ -355,6 +382,10 @@ void handleDropEvent(char* filePath)
 {
 	// When the user drops a file onto the window, this function is called
 	std::cout << "File dropped: " << filePath << std::endl;
+
+	LogFile* lf = handleLogFileLoad(filePath);
+	GLuint VAO = initializeVertexBuffer(lf); //load data into a vertex buffer
+	initializeVertexArrayObject(VAO);
 }
 
 void zoomIn()
@@ -533,23 +564,8 @@ void loadFiles(int argCount, char* args[])
 	for (int i = 1; i < argCount; i++)
 	{
 		std::string logPath = args[i];
-
-		LogFile* lf = new LogFile(logPath);
-
-		if (lf->getStatus() == LogFile::STATUS_ERROR)
-		{
-			// handle error
-			std::cout << "Error parsing log file" << std::endl;
-		}
-		else
-		{
-			// set the line colour
-			lf->lineColour[0] = lineColours[i-1][0];
-			lf->lineColour[1] = lineColours[i-1][1];
-			lf->lineColour[2] = lineColours[i-1][2];
-
-			logFiles.push_back(lf);
-		}
+		
+		handleLogFileLoad(logPath);
 	}
 }
 
