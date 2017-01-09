@@ -70,6 +70,9 @@ void LogFile::parseData()
 	// free up data
 	deleteData();
 
+	// set the size of the data
+	_size = points.size();
+
 	// change status
 	_status = LogFileStatus::STATUS_OK;
 }

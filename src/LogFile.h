@@ -15,9 +15,10 @@ public:
 
 	enum LogFileStatus { STATUS_OK, STATUS_ERROR };
 
-	LogFileStatus getStatus() { return _status; };
+	LogFileStatus getStatus() { return _status; }
 
-	std::vector<glm::vec2> getData() { return points; };
+	std::vector<glm::vec2> getData() { return points; }
+	int getDataSize() { return _size; }
 private:
 	std::vector<std::string>* _data;
 	std::vector<glm::vec2> points;
@@ -28,5 +29,7 @@ private:
 	void parseData();
 
 	void deleteData();
+
+	int _size;
 };
 

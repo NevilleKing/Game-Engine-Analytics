@@ -318,7 +318,7 @@ void initializeVertexBuffer()
 	for (int i = 0; i < logFiles.size(); i++)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObjects[i]);
-		glBufferData(GL_ARRAY_BUFFER, logFiles[i]->getData().size() * sizeof(logFiles[i]->getData()), &logFiles[i]->getData()[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, logFiles[i]->getDataSize() * sizeof(logFiles[i]->getData()), &logFiles[i]->getData()[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		cout << "vertexDataBufferObject created OK! GLUint is: " << vertexDataBufferObjects[i] << std::endl;
 	}
@@ -479,7 +479,7 @@ void render()
 	{
 		glBindVertexArray(vertexArrayObjects[i]);
 
-		for (int j = 0; j < logFiles[i]->getData().size() - 1; j++)
+		for (int j = 0; j < logFiles[i]->getDataSize() - 1; j++)
 		{
 			glDrawArrays(GL_LINES, j, 2); //Draw something, using Triangles, and 3 vertices - i.e. one lonely triangle
 		}
