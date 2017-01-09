@@ -41,6 +41,15 @@ SDL_GLContext context; //the SDL_GLContext
 int frameCount = 0;
 std::string frameLine = "";
 
+// predefined colours for line
+const GLfloat lineColours[5][3] = {
+	{ 1.0f, 1.0f, 1.0f }, // white
+	{ 1.0f, 0.0f, 0.0f }, // red
+	{ 0.0f, 1.0f, 0.0f }, // green
+	{ 0.0f, 0.0f, 1.0f }, // blue
+	{ 1.0f, 1.0f, 0.0f }, // yellow
+};
+
 std::vector<LogFile*> logFiles;
 // end::globalVariables[]
 
@@ -77,10 +86,7 @@ const std::string strFragmentShader = R"(
 //our variables
 bool done = false;
 
-//the color we'll pass to the GLSL
-GLfloat color[] = { 1.0f, 1.0f, 1.0f }; //using different values from CPU and static GLSL examples, to make it clear this is working
-
-										//our GL and GLSL variables
+//our GL and GLSL variables
 
 GLuint theProgram; //GLuint that we'll fill in to refer to the GLSL program (only have 1 at this point)
 GLint positionLocation; //GLuint that we'll fill in with the location of the `position` attribute in the GLSL
@@ -458,7 +464,7 @@ void updateSimulation(double simLength = 0.02) //update simulation with an amoun
 void preRender()
 {
 	glViewport(0, 0, 1000, 600); //set viewpoint
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f); //set clear colour
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //set clear colour
 	glClear(GL_COLOR_BUFFER_BIT); //clear the window (technical the scissor box bounds)
 }
 // end::preRender[]
@@ -467,11 +473,6 @@ void preRender()
 void render()
 {
 	glUseProgram(theProgram); //installs the program object specified by program as part of current rendering state
-
-							  //load data to GLSL that **may** have changed
-	glUniform3f(colorLocation, color[0], color[1], color[2]);
-	//alternatively, use glUnivform2fv
-	//glUniform2fv(colorLocation, 1, color); //Note: the count is 1, because we are setting a single uniform vec2 - https://www.opengl.org/wiki/GLSL_:_common_mistakes#How_to_use_glUniform
 
 	glm::mat4 projectionMatrix = glm::ortho(-1000.0f, 4000.0f, -1700.0f, 2300.0f);
 	// scale the map (zoom)
@@ -486,6 +487,9 @@ void render()
 	for (int i = 0; i < logFiles.size(); i++)
 	{
 		glBindVertexArray(vertexArrayObjects[i]);
+
+		// set the line colour
+		glUniform3f(colorLocation, logFiles[i]->lineColour[0], logFiles[i]->lineColour[1], logFiles[i]->lineColour[2]);
 
 		for (int j = 0; j < logFiles[i]->getDataSize() - 1; j++)
 		{
@@ -519,13 +523,10 @@ void cleanUp()
 }
 // end::cleanUp[]
 
-// tag::main[]
-int main(int argc, char* args[])
+void loadFiles(int argCount, char* args[])
 {
-	exeName = args[0];
-
 	// loop through arguments loading in the log files
-	for (int i = 1; i < argc; i++)
+	for (int i = 1; i < argCount; i++)
 	{
 		std::string logPath = args[i];
 
@@ -538,12 +539,25 @@ int main(int argc, char* args[])
 		}
 		else
 		{
+			// set the line colour
+			lf->lineColour[0] = lineColours[i-1][0];
+			lf->lineColour[1] = lineColours[i-1][1];
+			lf->lineColour[2] = lineColours[i-1][2];
+
 			logFiles.push_back(lf);
 		}
 	}
+}
+
+// tag::main[]
+int main(int argc, char* args[])
+{
+	exeName = args[0];
 
 	//setup
 	//- do just once
+	loadFiles(argc, args);
+
 	initialise();
 	createWindow();
 

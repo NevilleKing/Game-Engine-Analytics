@@ -19,6 +19,8 @@ public:
 
 	std::vector<glm::vec2> getData() { return points; }
 	int getDataSize() { return _size; }
+
+	float lineColour[3] = { 1.0f, 1.0f, 1.0f };
 private:
 	std::vector<std::string>* _data;
 	std::vector<glm::vec2> points;

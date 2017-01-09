@@ -27,6 +27,9 @@ LogFile::LogFile(std::string FileName)
 
 		// run the parsing function
 		parseData();
+
+		// change status
+		_status = LogFileStatus::STATUS_OK;
 	}
 	catch (int e) 
 	{
@@ -72,9 +75,6 @@ void LogFile::parseData()
 
 	// set the size of the data
 	_size = points.size();
-
-	// change status
-	_status = LogFileStatus::STATUS_OK;
 }
 
 void LogFile::deleteData()
