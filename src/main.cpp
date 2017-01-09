@@ -88,8 +88,8 @@ GLint colorLocation; //GLuint that we'll fill in with the location of the `color
 
 GLint projectionMatrixLocation; // location of the projection matrix in the GLSL
 
-GLuint vertexDataBufferObjects[2];
-GLuint vertexArrayObjects[2];
+std::vector<GLuint> vertexDataBufferObjects;
+std::vector<GLuint> vertexArrayObjects;
 
 GLfloat lineWidth = 1.0f;
 
@@ -285,11 +285,15 @@ void initializeProgram()
 //setup a GL object (a VertexArrayObject) that stores how to access data and from where
 void initializeVertexArrayObject()
 {
-	glGenVertexArrays(logFiles.size(), vertexArrayObjects); //create a Vertex Array Object
-
 	// loop through and create all the vetex objects
 	for (int i = 0; i < logFiles.size(); i++)
 	{
+		GLuint VAO; // hold the current value for the VAO
+
+		glGenVertexArrays(1, &VAO); //create a Vertex Array Object
+
+		vertexArrayObjects.push_back(VAO); // add to the vector
+
 		glBindVertexArray(vertexArrayObjects[i]); //make the just created vertexArrayObject the active one
 
 		glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObjects[i]); //bind vertexDataBufferObject
@@ -312,11 +316,15 @@ void initializeVertexArrayObject()
 // tag::initializeVertexBuffer[]
 void initializeVertexBuffer()
 {
-	glGenBuffers(logFiles.size(), vertexDataBufferObjects);
-
 	// loop through and create all the buffer objects
 	for (int i = 0; i < logFiles.size(); i++)
 	{
+		GLuint VDBO;
+
+		glGenBuffers(1, &VDBO);
+
+		vertexDataBufferObjects.push_back(VDBO); // add to the vector
+
 		glBindBuffer(GL_ARRAY_BUFFER, vertexDataBufferObjects[i]);
 		glBufferData(GL_ARRAY_BUFFER, logFiles[i]->getDataSize() * sizeof(&logFiles[i]->getData()), &logFiles[i]->getData()[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
