@@ -445,6 +445,12 @@ void handleInput()
 			if (mouseDown)
 				offsetVector += glm::vec2(event.motion.xrel, -event.motion.yrel) * 2.0f;
 			break;
+		case SDL_MOUSEWHEEL:
+			if (event.wheel.y > 0)
+				zoomIn();
+			else if (event.wheel.y < 0)
+				zoomOut();
+			break;
 		}
 	}
 }
