@@ -39,6 +39,9 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
 			{
 				// in current bin
 				_bins[(int)currentPosition.x][(int)currentPosition.y]++;
+				int newBinValue = _bins[(int)currentPosition.x][(int)currentPosition.y];
+				if (newBinValue > _maxBinValue)
+					_maxBinValue = newBinValue;
 				break;
 			}
 
@@ -66,6 +69,8 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
 			_vertexData.push_back(glm::vec2(i*binWidth, j*binHeight + binHeight)); // bottom left
 		}
 	}
+
+	this->_binY = binY;
 }
 
 void Histogram::Initialise(GLuint positionLocation)
@@ -116,8 +121,20 @@ void Histogram::render(GLuint colorLocation)
 	{
 		glBindVertexArray(_vertextArrayObject);
 
-		glDrawArrays(GL_TRIANGLES, 0, _vertexData.size() * 2);
+		int binIndex = 0;
+		for (int i = 0; i < _vertexData.size(); i += 6)
+		{
+			GLfloat* color = getBinColour(_bins[binIndex / _binY][binIndex % _binY]);
+			glUniform3f(colorLocation, color[0], color[1], color[2]);
+			glDrawArrays(GL_TRIANGLES, i, 12);
+		}
 
 		glBindVertexArray(0);
 	}
+}
+
+GLfloat * Histogram::getBinColour(int binValue)
+{
+	GLfloat test[] = { 1.0f, 0.0f, 0.0f };
+	return test;
 }

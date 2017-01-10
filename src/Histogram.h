@@ -21,6 +21,9 @@ private:
 	// data structure to store bin (int) values - dynamic array of x . y elements
 	std::vector<std::vector<int>> _bins;
 
+	// max bin value
+	int _maxBinValue = 0;
+
 	// vertex data of the bins
 	std::vector<glm::vec2> _vertexData;
 
@@ -29,4 +32,9 @@ private:
 
 	// holds if the VAO has been generated
 	bool _isInit = false;
+
+	// returns a colour value based on the value and the max bin value
+	GLfloat* getBinColour(int binValue);
+
+	int _binY;
 };
