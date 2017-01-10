@@ -22,6 +22,7 @@
 
 // custom classes
 #include "LogFile.h"
+#include "Histogram.h"
 
 // end::includes[]
 
@@ -51,6 +52,7 @@ const GLfloat lineColours[5][3] = {
 };
 
 std::vector<LogFile*> logFiles;
+Histogram* heatmap;
 // end::globalVariables[]
 
 // tag::vertexShader[]
@@ -316,13 +318,14 @@ void initializeProgram()
 
 // tag::initializeVertexArrayObject[]
 //setup a GL object (a VertexArrayObject) that stores how to access data and from where
-void initializeVertexArrayObject(GLuint VDBO)
+GLuint initializeVertexArrayObject(GLuint VDBO, bool addToVector = true)
 {
 		GLuint VAO; // hold the current value for the VAO
 
 		glGenVertexArrays(1, &VAO); //create a Vertex Array Object
 
-		vertexArrayObjects.push_back(VAO); // add to the vector
+		if (addToVector)
+			vertexArrayObjects.push_back(VAO); // add to the vector
 
 		glBindVertexArray(VAO); //make the just created vertexArrayObject the active one
 
@@ -339,25 +342,33 @@ void initializeVertexArrayObject(GLuint VDBO)
 		glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind array buffer
 
 		cout << "Vertex Array Object created OK! GLUint is: " << VAO << std::endl;
+
+		return VAO;
 }
 // end::initializeVertexArrayObject[]
 
 // tag::initializeVertexBuffer[]
-GLuint initializeVertexBuffer(LogFile* lf)
+GLuint initializeVertexBuffer(GLsizeiptr dataSize, GLvoid* data, bool addToVector = true)
 {
 	GLuint VDBO;
 
 	glGenBuffers(1, &VDBO);
 
-	vertexDataBufferObjects.push_back(VDBO); // add to the vector
+	if (addToVector)
+		vertexDataBufferObjects.push_back(VDBO); // add to the vector
 
 	glBindBuffer(GL_ARRAY_BUFFER, VDBO);
-	glBufferData(GL_ARRAY_BUFFER, lf->getDataSize() * sizeof(&lf->getData()), &lf->getData()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	cout << "vertexDataBufferObject created OK! GLUint is: " << VDBO << std::endl;
 
 	// return the data
 	return VDBO;
+}
+
+GLuint initializeVertexBuffer(LogFile* lf)
+{
+	return initializeVertexBuffer(lf->getDataSize() * sizeof(&lf->getData()), &lf->getData()[0]);
 }
 // end::initializeVertexBuffer[]
 
@@ -369,8 +380,15 @@ void loadAssets()
 	// loop through and create all the vetex objects
 	for (auto lf : logFiles)
 	{
-		GLuint VAO = initializeVertexBuffer(lf); //load data into a vertex buffer
-		initializeVertexArrayObject(VAO);
+		GLuint VBO = initializeVertexBuffer(lf); //load data into a vertex buffer
+		initializeVertexArrayObject(VBO);
+	}
+
+	// create the histogram for the fist set of data
+	if (logFiles.size() > 0)
+	{
+		heatmap = new Histogram(logFiles[0], 10, 10);
+		heatmap->Initialise(positionLocation);
 	}
 
 	cout << "Loaded Assets OK!\n";
@@ -516,6 +534,15 @@ void render()
 	projectionMatrix = glm::translate(projectionMatrix, glm::vec3(offsetVector, 0.0f));
 	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
+	// HEATMAP -----------------------------------------------------------------
+
+	if (heatmap != nullptr)
+	{
+		heatmap->render(colorLocation);
+	}
+
+	// TRAJECTORIES ------------------------------------------------------------
+
 	// set the line width based on our variable
 	glLineWidth(lineWidth);
 
@@ -528,7 +555,7 @@ void render()
 
 		for (int j = 0; j < logFiles[i]->getDataSize() - 1; j++)
 		{
-			glDrawArrays(GL_LINES, j, 2); //Draw something, using Triangles, and 3 vertices - i.e. one lonely triangle
+			glDrawArrays(GL_LINES, j, 2);
 		}
 
 		glBindVertexArray(0);

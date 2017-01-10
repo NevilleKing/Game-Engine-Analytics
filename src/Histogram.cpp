@@ -50,4 +50,74 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
 			}
 		}
 	}
+
+	// calculate the vertex data points for each of the bins
+	// loop through x
+	for (int i = 0; i < binX; i++)
+	{
+		// loop through y
+		for (int j = 0; j < binY; j++)
+		{
+			_vertexData.push_back(glm::vec2(i*binWidth, j*binHeight)); // top left
+			_vertexData.push_back(glm::vec2(i*binWidth+binWidth, j*binHeight)); // top right
+			_vertexData.push_back(glm::vec2(i*binWidth, j*binHeight+binHeight)); // bottom left
+			_vertexData.push_back(glm::vec2(i*binWidth+binWidth, j*binHeight+binHeight)); // bottom right
+			_vertexData.push_back(glm::vec2(i*binWidth + binWidth, j*binHeight)); // top right
+			_vertexData.push_back(glm::vec2(i*binWidth, j*binHeight + binHeight)); // bottom left
+		}
+	}
+}
+
+void Histogram::Initialise(GLuint positionLocation)
+{
+	if (!_isInit)
+	{
+		_isInit = true;
+
+		// Vertex Buffer
+		GLuint VDBO;
+
+		glGenBuffers(1, &VDBO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VDBO);
+		glBufferData(GL_ARRAY_BUFFER, _vertexData.size() * sizeof(&_vertexData), &_vertexData[0], GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		std::cout << "vertexDataBufferObject created OK! GLUint is: " << VDBO << std::endl;
+
+		// Vertex Array Object
+
+		GLuint VAO; // hold the current value for the VAO
+
+		glGenVertexArrays(1, &VAO); //create a Vertex Array Object
+
+		glBindVertexArray(VAO); //make the just created vertexArrayObject the active one
+
+		glBindBuffer(GL_ARRAY_BUFFER, VDBO); //bind vertexDataBufferObject
+
+		glEnableVertexAttribArray(positionLocation); //enable attribute at index positionLocation
+
+		glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, 0); //specify that position data contains four floats per vertex, and goes into attribute index positionLocation
+
+		glBindVertexArray(0); //unbind the vertexArrayObject so we can't change it
+
+							  //cleanup
+		glDisableVertexAttribArray(positionLocation); //disable vertex attribute at index positionLocation
+		glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind array buffer
+
+		std::cout << "Vertex Array Object created OK! GLUint is: " << VAO << std::endl;
+
+		_vertextArrayObject = VAO;
+	}
+}
+
+void Histogram::render(GLuint colorLocation)
+{
+	if (_isInit)
+	{
+		glBindVertexArray(_vertextArrayObject);
+
+		glDrawArrays(GL_TRIANGLES, 0, _vertexData.size() * 2);
+
+		glBindVertexArray(0);
+	}
 }
