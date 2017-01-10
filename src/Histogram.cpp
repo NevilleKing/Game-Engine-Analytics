@@ -61,12 +61,12 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
 		// loop through y
 		for (int j = 0; j < binY; j++)
 		{
-			_vertexData.push_back(glm::vec2(i*binWidth, j*binHeight)); // top left
-			_vertexData.push_back(glm::vec2(i*binWidth+binWidth, j*binHeight)); // top right
-			_vertexData.push_back(glm::vec2(i*binWidth, j*binHeight+binHeight)); // bottom left
-			_vertexData.push_back(glm::vec2(i*binWidth+binWidth, j*binHeight+binHeight)); // bottom right
-			_vertexData.push_back(glm::vec2(i*binWidth + binWidth, j*binHeight)); // top right
-			_vertexData.push_back(glm::vec2(i*binWidth, j*binHeight + binHeight)); // bottom left
+			_vertexData.push_back(glm::vec2(min.x+i*binWidth, min.y + j*binHeight)); // top left
+			_vertexData.push_back(glm::vec2(min.x + i*binWidth+binWidth, min.y + j*binHeight)); // top right
+			_vertexData.push_back(glm::vec2(min.x + i*binWidth, min.y + j*binHeight+binHeight)); // bottom left
+			_vertexData.push_back(glm::vec2(min.x + i*binWidth+binWidth, min.y + j*binHeight+binHeight)); // bottom right
+			_vertexData.push_back(glm::vec2(min.x + i*binWidth + binWidth, min.y + j*binHeight)); // top right
+			_vertexData.push_back(glm::vec2(min.x + i*binWidth, min.y + j*binHeight + binHeight)); // bottom left
 		}
 	}
 
