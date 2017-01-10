@@ -45,6 +45,7 @@ LogFile::~LogFile()
 
 void LogFile::parseData()
 {
+	bool firstPass = true;
 	// loop through all the data in the '_data' vector
 	for (auto line : *_data)
 	{
@@ -67,6 +68,25 @@ void LogFile::parseData()
 
 		// save to points vector
 		points.push_back(position);
+
+		// update the min and max if needed
+		if (firstPass)
+		{
+			firstPass = false;
+			_max = position;
+			_min = position;
+		}
+		else
+		{
+			if (vecs[0] > _max.x)
+				_max.x = vecs[0];
+			if (vecs[1] > _max.y)
+				_max.y = vecs[1];
+			if (vecs[0] < _min.x)
+				_min.x = vecs[0];
+			if (vecs[1] < _min.y)
+				_min.y = vecs[1];
+		}
 	}
 
 
