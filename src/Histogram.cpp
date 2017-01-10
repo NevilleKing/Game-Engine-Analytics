@@ -127,6 +127,7 @@ void Histogram::render(GLuint colorLocation)
 			GLfloat* color = getBinColour(_bins[binIndex / _binY][binIndex % _binY]);
 			glUniform3f(colorLocation, color[0], color[1], color[2]);
 			glDrawArrays(GL_TRIANGLES, i, 12);
+			binIndex++;
 		}
 
 		glBindVertexArray(0);
@@ -135,6 +136,22 @@ void Histogram::render(GLuint colorLocation)
 
 GLfloat * Histogram::getBinColour(int binValue)
 {
-	GLfloat test[] = { 1.0f, 0.0f, 0.0f };
-	return test;
+	/*
+		Colour mapping : http://stackoverflow.com/questions/12875486/what-is-the-algorithm-to-create-colors-for-a-heatmap
+		0    : blue   rgb(0, 0, 1)
+		0.25 : cyan   rgb(0, 1, 1)
+		0.5  : green  rgb(0, 1, 0)
+		0.75 : yellow rgb(1, 1, 0)
+		1    : red    rgb(1, 0, 0)
+	*/
+
+	// 0 - 1 based on bin value
+	GLfloat val = (GLfloat)binValue / (GLfloat)_maxBinValue;
+
+	GLfloat r = val;
+	GLfloat g = 0;
+	GLfloat b = 0;
+
+	GLfloat returnVal[] = { r, g, b };
+	return returnVal;
 }

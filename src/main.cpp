@@ -387,7 +387,7 @@ void loadAssets()
 	// create the histogram for the fist set of data
 	if (logFiles.size() > 0)
 	{
-		heatmap = new Histogram(logFiles[0], 10, 10);
+		heatmap = new Histogram(logFiles[0], 2, 2);
 		heatmap->Initialise(positionLocation);
 	}
 
