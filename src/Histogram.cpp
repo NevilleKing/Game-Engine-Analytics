@@ -1,7 +1,10 @@
 #include "Histogram.h"
 
-Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
+Histogram::Histogram(LogFile * logFile, const int binX, const int binY, glm::vec2 min, glm::vec2 max)
 {
+	_min = min;
+	_max = max;
+
 	// initialise the vector
 	for (int i = 0; i < binX; i++)
 	{
@@ -12,10 +15,6 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
 		}
 		_bins.push_back(myBin);
 	}
-
-	// get max and min from the log file
-	glm::vec2 max = logFile->getMax();
-	glm::vec2 min = logFile->getMin();	
 
 	// find the ranges
 	float rangeX = max.x - min.x;

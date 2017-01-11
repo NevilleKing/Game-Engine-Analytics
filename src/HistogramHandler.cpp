@@ -1,21 +1,34 @@
 #include "HistogramHandler.h"
 
-HistogramHandler::HistogramHandler(GLuint positionLocation, GLuint colourLocation)
+HistogramHandler::HistogramHandler(GLuint positionLocation, GLuint colourLocation, const int binX, const int binY)
 {
 	_positionLocation = positionLocation;
 	_colourLocation = colourLocation;
+	_binX = binX;
+	_binY = binY;
 }
 
 HistogramHandler::~HistogramHandler()
 {
+	for (auto heatmap : _heatmaps)
+		delete heatmap;
+
 	glDeleteBuffers(1, &_vertextBufferObject);
 	glDeleteVertexArrays(1, &_vertextArrayObject);
 }
 
-void HistogramHandler::addHistogram(LogFile* logFile, const int binX, const int binY)
+void HistogramHandler::addHistogram(LogFile* logFile)
 {
-	_heatmaps.push_back(Histogram(logFile, binX, binY));
-	Initialise();
+	if (_heatmaps.size() == 0)
+	{
+		_heatmaps.push_back(new Histogram(logFile, _binX, _binY));
+		Initialise();
+	}
+	else
+	{
+		// assume (for now) that it is smaller
+		_heatmaps.push_back(new Histogram(logFile, _binX, _binY, _heatmaps.back()->getMin(), _heatmaps.back()->getMax()));
+	}
 }
 
 void HistogramHandler::render()
@@ -25,9 +38,9 @@ void HistogramHandler::render()
 		glBindVertexArray(_vertextArrayObject);
 
 		int binIndex = 0;
-		for (int i = 0; i < _heatmaps[0].getVertexDataSize(); i += 6)
+		for (int i = 0; i < _heatmaps[0]->getVertexDataSize(); i += 6)
 		{
-			GLfloat* color = _heatmaps[0].getBinColour(binIndex);
+			GLfloat* color = _heatmaps[0]->getBinColour(binIndex);
 			glUniform3f(_colourLocation, color[0], color[1], color[2]);
 			glDrawArrays(GL_TRIANGLES, i, 12);
 			binIndex++;
@@ -50,7 +63,8 @@ void HistogramHandler::Initialise()
 
 		_vertextBufferObject = VDBO;
 
-		allocateVertexBufferObject(_heatmaps[0].getVertexDataBufferSize(), _heatmaps[0].getVertexData());
+		GLint _currentVertexByteSize = _heatmaps[0]->getVertexDataBufferSize();
+		allocateVertexBufferObject(_currentVertexByteSize, _heatmaps[0]->getVertexData());
 
 		std::cout << "vertexDataBufferObject created OK! GLUint is: " << VDBO << std::endl;
 

@@ -9,10 +9,10 @@
 class HistogramHandler
 {
 public:
-	HistogramHandler(GLuint positionLocation, GLuint colourLocation);
+	HistogramHandler(GLuint positionLocation, GLuint colourLocation, const int binX, const int binY);
 	~HistogramHandler();
 	
-	void addHistogram(LogFile* logFile, const int binX, const int binY);
+	void addHistogram(LogFile* logFile);
 
 	void render();
 private:
@@ -20,7 +20,7 @@ private:
 
 	void allocateVertexBufferObject(GLsizeiptr size, const GLvoid* data);
 
-	std::vector<Histogram> _heatmaps;
+	std::vector<Histogram*> _heatmaps;
 
 	GLuint _positionLocation;
 	GLuint _colourLocation;
@@ -32,4 +32,6 @@ private:
 
 	// int for VBO
 	GLuint _vertextBufferObject;
+
+	int _binX = 0, _binY = 0;
 };

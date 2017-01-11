@@ -375,14 +375,14 @@ GLuint initializeVertexBuffer(LogFile* lf)
 // tag::loadAssets[]
 void addHistogram(LogFile* lf)
 {
-	heatmaps->addHistogram(lf, 10, 5);
+	heatmaps->addHistogram(lf);
 }
 
 void loadAssets()
 {
 	initializeProgram(); //create GLSL Shaders, link into a GLSL program, and get IDs of attributes and variables
 	
-	heatmaps = new HistogramHandler(positionLocation, colorLocation);
+	heatmaps = new HistogramHandler(positionLocation, colorLocation, 10, 5);
 
 	// loop through and create all the vetex objects
 	for (auto lf : logFiles)

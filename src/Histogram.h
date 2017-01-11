@@ -9,7 +9,8 @@ class Histogram
 {
 public:
 	// load the log file data into the histogram
-	Histogram(LogFile* logFile, const int binX, const int binY);
+	Histogram(LogFile* logFile, const int binX, const int binY, glm::vec2 min, glm::vec2 max);
+	Histogram(LogFile* logFile, const int binX, const int binY) : Histogram(logFile, binX, binY, logFile->getMin(), logFile->getMax()) {};
 
 	glm::vec2* getVertexData() { return &_vertexData[0]; }
 	int getVertexDataBufferSize() { return _vertexData.size() * sizeof(&_vertexData[0]); }
@@ -17,6 +18,9 @@ public:
 
 	// returns a colour value based on the value and the max bin value
 	GLfloat* getBinColour(int binIndex);
+
+	glm::vec2 getMin() { return _min; }
+	glm::vec2 getMax() { return _max; }
 private:
 	// data structure to store bin (int) values - dynamic array of x . y elements
 	std::vector<std::vector<int>> _bins;
@@ -34,4 +38,7 @@ private:
 
 	const GLfloat colour1[3] = { 0.0f, 0.0f, 0.0f };
 	const GLfloat colour2[3] = { 1.0f, 0.54902f, 0.0f };
+
+	glm::vec2 _min;
+	glm::vec2 _max;
 };
