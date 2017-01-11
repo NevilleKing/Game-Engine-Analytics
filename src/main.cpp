@@ -22,7 +22,7 @@
 
 // custom classes
 #include "LogFile.h"
-#include "Histogram.h"
+#include "HistogramHandler.h"
 
 // end::includes[]
 
@@ -52,7 +52,7 @@ const GLfloat lineColours[5][3] = {
 };
 
 std::vector<LogFile*> logFiles;
-Histogram* heatmap;
+HistogramHandler* heatmaps;
 // end::globalVariables[]
 
 // tag::vertexShader[]
@@ -384,11 +384,12 @@ void loadAssets()
 		initializeVertexArrayObject(VBO);
 	}
 
+	heatmaps = new HistogramHandler(positionLocation, colorLocation);
+
 	// create the histogram for the fist set of data
 	if (logFiles.size() > 0)
 	{
-		heatmap = new Histogram(logFiles[0], 10, 5);
-		heatmap->Initialise(positionLocation);
+		heatmaps->addHistogram(logFiles[0], 10, 5);
 	}
 
 	cout << "Loaded Assets OK!\n";
@@ -536,9 +537,9 @@ void render()
 
 	// HEATMAP -----------------------------------------------------------------
 
-	if (heatmap != nullptr)
+	if (heatmaps != nullptr)
 	{
-		heatmap->render(colorLocation);
+		heatmaps->render();
 	}
 
 	// TRAJECTORIES ------------------------------------------------------------
