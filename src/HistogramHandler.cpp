@@ -81,7 +81,12 @@ void HistogramHandler::render()
 				for (int j = 1; j < _heatmaps.size(); j++)
 				{
 					RGB hMapColour = _heatmaps[j]->getBinColour(binIndex);
-					color = interpolate(color, hMapColour);
+					if (color.percent >= 1.0f && hMapColour.percent == 0)
+						continue;
+					else if (color.percent == 0.0f && hMapColour.percent >= 1.0f)
+						color = hMapColour;
+					else
+						color = interpolate(color, hMapColour);
 				}
 			}
 
