@@ -92,6 +92,7 @@ RGB Histogram::getBinColour(int binIndex)
 	b = (colour2[2] - colour1[2]) * val + colour1[2];
 
 	RGB returnVal(r, g, b);
+	returnVal.percent = val;
 	return returnVal;
 }
 

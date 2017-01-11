@@ -52,7 +52,8 @@ void HistogramHandler::render()
 				color = _heatmaps[0]->getBinColour(binIndex);
 				for (int j = 1; j < _heatmaps.size(); j++)
 				{
-					color = interpolate(color, _heatmaps[j]->getBinColour(binIndex), 0.5f);
+					RGB hMapColour = _heatmaps[j]->getBinColour(binIndex);
+					color = interpolate(color, hMapColour);
 				}
 			}
 
@@ -117,8 +118,9 @@ void HistogramHandler::allocateVertexBufferObject(GLsizeiptr size, const GLvoid 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-RGB HistogramHandler::interpolate(RGB colour1, RGB colour2, GLfloat fraction)
+RGB HistogramHandler::interpolate(RGB colour1, RGB colour2)
 {
+	GLfloat fraction = colour2.percent / (colour1.percent + colour2.percent);
 	GLfloat r, g, b;
 	// using algorithm from http://stackoverflow.com/questions/13488957/interpolate-from-one-color-to-another
 	r = (colour2.r - colour1.r) * fraction + colour1.r;
@@ -126,5 +128,9 @@ RGB HistogramHandler::interpolate(RGB colour1, RGB colour2, GLfloat fraction)
 	b = (colour2.b - colour1.b) * fraction + colour1.b;
 
 	RGB returnVal(r, g, b);
+	if (colour1.percent > colour2.percent)
+		returnVal.percent = colour1.percent;
+	else
+		returnVal.percent = colour2.percent;
 	return returnVal;
 }

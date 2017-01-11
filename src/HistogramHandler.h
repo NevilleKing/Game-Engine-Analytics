@@ -21,7 +21,7 @@ private:
 
 	void allocateVertexBufferObject(GLsizeiptr size, const GLvoid* data);
 
-	RGB interpolate(RGB colour1, RGB colour2, GLfloat fraction);
+	RGB interpolate(RGB colour1, RGB colour2);
 
 	std::vector<Histogram*> _heatmaps;
 

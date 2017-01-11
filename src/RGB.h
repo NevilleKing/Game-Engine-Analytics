@@ -8,6 +8,7 @@ public:
 	GLfloat r;
 	GLfloat g;
 	GLfloat b;
+	GLfloat percent;
 
 	RGB(GLfloat red, GLfloat green, GLfloat blue)
 	{
