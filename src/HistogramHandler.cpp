@@ -42,8 +42,21 @@ void HistogramHandler::render()
 		int binIndex = 0;
 		for (int i = 0; i < _heatmaps[0]->getVertexDataSize(); i += 6)
 		{
-			GLfloat* color = _heatmaps[0]->getBinColour(binIndex);
-			glUniform3f(_colourLocation, color[0], color[1], color[2]);
+			RGB color;
+
+			if (_heatmaps.size() == 1)
+				color = _heatmaps[0]->getBinColour(binIndex);
+			else
+			{
+				// need to interpolate between the 2 colours
+				color = _heatmaps[0]->getBinColour(binIndex);
+				for (int j = 1; j < _heatmaps.size(); j++)
+				{
+					color = interpolate(color, _heatmaps[j]->getBinColour(binIndex), 0.5f);
+				}
+			}
+
+			glUniform3f(_colourLocation, color.r, color.g, color.b);
 			glDrawArrays(GL_TRIANGLES, i, 12);
 			binIndex++;
 		}
@@ -102,4 +115,16 @@ void HistogramHandler::allocateVertexBufferObject(GLsizeiptr size, const GLvoid 
 	glBindBuffer(GL_ARRAY_BUFFER, _vertextBufferObject);
 	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+RGB HistogramHandler::interpolate(RGB colour1, RGB colour2, GLfloat fraction)
+{
+	GLfloat r, g, b;
+	// using algorithm from http://stackoverflow.com/questions/13488957/interpolate-from-one-color-to-another
+	r = (colour2.r - colour1.r) * fraction + colour1.r;
+	g = (colour2.g - colour1.g) * fraction + colour1.g;
+	b = (colour2.b - colour1.b) * fraction + colour1.b;
+
+	RGB returnVal(r, g, b);
+	return returnVal;
 }

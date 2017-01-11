@@ -78,7 +78,7 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY, glm::vec
 	this->_binY = binY;
 }
 
-GLfloat * Histogram::getBinColour(int binIndex)
+RGB Histogram::getBinColour(int binIndex)
 {
 	GLfloat binValue = _bins[binIndex / _binY][binIndex % _binY];
 
@@ -91,7 +91,7 @@ GLfloat * Histogram::getBinColour(int binIndex)
 	g = (colour2[1] - colour1[1]) * val + colour1[1];
 	b = (colour2[2] - colour1[2]) * val + colour1[2];
 
-	GLfloat returnVal[] = { r, g, b };
+	RGB returnVal(r, g, b);
 	return returnVal;
 }
 

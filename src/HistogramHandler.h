@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include "LogFile.h"
 #include "Histogram.h"
+#include "RGB.h"
 
 class HistogramHandler
 {
@@ -19,6 +20,8 @@ private:
 	void Initialise();
 
 	void allocateVertexBufferObject(GLsizeiptr size, const GLvoid* data);
+
+	RGB interpolate(RGB colour1, RGB colour2, GLfloat fraction);
 
 	std::vector<Histogram*> _heatmaps;
 

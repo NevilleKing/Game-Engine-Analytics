@@ -4,6 +4,7 @@
 #include <vector>
 #include "LogFile.h"
 #include <GL/glew.h>
+#include "RGB.h"
 
 class Histogram 
 {
@@ -17,7 +18,7 @@ public:
 	int getVertexDataSize() { return _vertexData.size(); }
 
 	// returns a colour value based on the value and the max bin value
-	GLfloat* getBinColour(int binIndex);
+	RGB getBinColour(int binIndex);
 
 	glm::vec2 getMin() { return _min; }
 	glm::vec2 getMax() { return _max; }
