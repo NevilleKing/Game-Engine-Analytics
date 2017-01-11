@@ -79,72 +79,10 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
 	this->_binY = binY;
 }
 
-void Histogram::Initialise(GLuint positionLocation)
+GLfloat * Histogram::getBinColour(int binIndex)
 {
-	if (!_isInit)
-	{
-		_isInit = true;
+	GLfloat binValue = _bins[binIndex / _binY][binIndex % _binY];
 
-		// Vertex Buffer
-		GLuint VDBO;
-
-		glGenBuffers(1, &VDBO);
-
-		glBindBuffer(GL_ARRAY_BUFFER, VDBO);
-		glBufferData(GL_ARRAY_BUFFER, _vertexData.size() * sizeof(&_vertexData), &_vertexData[0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		std::cout << "vertexDataBufferObject created OK! GLUint is: " << VDBO << std::endl;
-
-		// Vertex Array Object
-
-		GLuint VAO; // hold the current value for the VAO
-
-		glGenVertexArrays(1, &VAO); //create a Vertex Array Object
-
-		glBindVertexArray(VAO); //make the just created vertexArrayObject the active one
-
-		glBindBuffer(GL_ARRAY_BUFFER, VDBO); //bind vertexDataBufferObject
-
-		glEnableVertexAttribArray(positionLocation); //enable attribute at index positionLocation
-
-		glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, 0); //specify that position data contains four floats per vertex, and goes into attribute index positionLocation
-
-		glBindVertexArray(0); //unbind the vertexArrayObject so we can't change it
-
-							  //cleanup
-		glDisableVertexAttribArray(positionLocation); //disable vertex attribute at index positionLocation
-		glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind array buffer
-
-		std::cout << "Vertex Array Object created OK! GLUint is: " << VAO << std::endl;
-
-		_vertextArrayObject = VAO;
-	}
-}
-
-void Histogram::render(GLuint colorLocation)
-{
-	if (_isInit)
-	{
-		glBindVertexArray(_vertextArrayObject);
-
-		GLfloat color1[] = { 0.0f, 0.0f, 0.0f };
-		GLfloat color2[] = { 1.0f, 0.54902f, 0.0f };
-
-		int binIndex = 0;
-		for (int i = 0; i < _vertexData.size(); i += 6)
-		{
-			GLfloat* color = getBinColour(_bins[binIndex / _binY][binIndex % _binY], color1, color2);
-			glUniform3f(colorLocation, color[0], color[1], color[2]);
-			glDrawArrays(GL_TRIANGLES, i, 12);
-			binIndex++;
-		}
-
-		glBindVertexArray(0);
-	}
-}
-
-GLfloat * Histogram::getBinColour(int binValue, GLfloat colour1[3], GLfloat colour2[3])
-{
 	// 0 - 1 based on bin value
 	GLfloat val = (GLfloat)binValue / (GLfloat)_maxBinValue;
 

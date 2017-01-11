@@ -16,8 +16,18 @@ public:
 
 	void render();
 private:
+	void Initialise();
+
 	std::vector<Histogram> _heatmaps;
 
 	GLuint _positionLocation;
 	GLuint _colourLocation;
+
+	bool _isInit = false;
+
+	// int for VAO
+	GLuint _vertextArrayObject;
+
+	// int for VBO
+	GLuint _vertextBufferObject;
 };
