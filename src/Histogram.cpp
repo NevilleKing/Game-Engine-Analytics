@@ -94,3 +94,10 @@ GLfloat * Histogram::getBinColour(int binIndex)
 	GLfloat returnVal[] = { r, g, b };
 	return returnVal;
 }
+
+void Histogram::setColours(const GLfloat colour_2[3])
+{
+	colour2[0] = colour_2[0];
+	colour2[1] = colour_2[1];
+	colour2[2] = colour_2[2];
+}

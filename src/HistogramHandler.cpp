@@ -22,12 +22,14 @@ void HistogramHandler::addHistogram(LogFile* logFile)
 	if (_heatmaps.size() == 0)
 	{
 		_heatmaps.push_back(new Histogram(logFile, _binX, _binY));
+		_heatmaps.back()->setColours(_quadColours[_heatmaps.size() - 1]);
 		Initialise();
 	}
 	else
 	{
 		// assume (for now) that it is smaller
 		_heatmaps.push_back(new Histogram(logFile, _binX, _binY, _heatmaps.back()->getMin(), _heatmaps.back()->getMax()));
+		_heatmaps.back()->setColours(_quadColours[_heatmaps.size() - 1]);
 	}
 }
 

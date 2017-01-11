@@ -34,4 +34,12 @@ private:
 	GLuint _vertextBufferObject;
 
 	int _binX = 0, _binY = 0;
+
+	const GLfloat _quadColours[5][3] = {
+		{ 1.0f, 0.54902f, 0.0f }, // dark orange
+		{ 0.556863f, 0.219608f, 0.556863f }, // purple
+		{ 0.0f, 1.0f, 0.498039f }, // green
+		{ 1.0f, 0.411765f, 0.705882f }, // pink
+		{ 0.698039f, 0.133333f, 0.133333f } // brick red
+	};
 };
