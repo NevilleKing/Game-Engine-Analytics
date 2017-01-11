@@ -53,6 +53,8 @@ const GLfloat lineColours[5][3] = {
 
 std::vector<LogFile*> logFiles;
 HistogramHandler* heatmaps;
+
+int binX = 5, binY = 5;
 // end::globalVariables[]
 
 // tag::vertexShader[]
@@ -382,7 +384,7 @@ void loadAssets()
 {
 	initializeProgram(); //create GLSL Shaders, link into a GLSL program, and get IDs of attributes and variables
 	
-	heatmaps = new HistogramHandler(positionLocation, colorLocation, 5, 5);
+	heatmaps = new HistogramHandler(positionLocation, colorLocation, binX, binY);
 
 	// loop through and create all the vetex objects
 	for (auto lf : logFiles)
@@ -594,6 +596,17 @@ void loadFiles(int argCount, char* args[])
 	for (int i = 1; i < argCount; i++)
 	{
 		std::string logPath = args[i];
+
+		if (logPath == "--binX")
+		{
+			binX = atoi(args[++i]);
+			i++;
+		}
+		else if (logPath == "--binY")
+		{
+			binY = atoi(args[++i]);
+			i++;
+		}
 		
 		handleLogFileLoad(logPath);
 	}
