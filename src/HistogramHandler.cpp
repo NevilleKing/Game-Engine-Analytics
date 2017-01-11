@@ -24,11 +24,36 @@ void HistogramHandler::addHistogram(LogFile* logFile)
 		_heatmaps.push_back(new Histogram(logFile, _binX, _binY));
 		_heatmaps.back()->setColours(_quadColours[_heatmaps.size() - 1]);
 		Initialise();
+		_currentMin = logFile->getMin();
+		_currentMin = logFile->getMax();
 	}
 	else
-	{
-		// assume (for now) that it is smaller
-		_heatmaps.push_back(new Histogram(logFile, _binX, _binY, _heatmaps.back()->getMin(), _heatmaps.back()->getMax()));
+	{		
+		// if the new heatmap is bigger we need to recalculate
+		glm::vec2 lfMin = logFile->getMin();
+		glm::vec2 lfMax = logFile->getMax();
+
+		if (lfMin.x < _currentMin.x ||
+			lfMin.y < _currentMin.y ||
+			lfMax.y > _currentMax.y ||
+			lfMax.x > _currentMax.x)
+		{
+			_heatmaps.push_back(new Histogram(logFile, _binX, _binY));
+			// update buffer
+			GLint _currentVertexByteSize = _heatmaps.back()->getVertexDataBufferSize();
+			allocateVertexBufferObject(_currentVertexByteSize, _heatmaps.back()->getVertexData());
+
+			// update other heatmaps
+			for (int i = 0; i < _heatmaps.size() - 1; i++) // miss last one
+			{
+				_heatmaps[i]->recalculate(lfMin, lfMax);
+			}
+		}
+		else
+		{
+			_heatmaps.push_back(new Histogram(logFile, _binX, _binY, _heatmaps.back()->getMin(), _heatmaps.back()->getMax()));
+		}
+
 		_heatmaps.back()->setColours(_quadColours[_heatmaps.size() - 1]);
 	}
 }

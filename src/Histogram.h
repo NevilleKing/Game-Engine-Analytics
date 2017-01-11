@@ -24,6 +24,8 @@ public:
 	glm::vec2 getMax() { return _max; }
 
 	void setColours(const GLfloat colour2[3]);
+
+	void recalculate(glm::vec2 min, glm::vec2 max);
 private:
 	// data structure to store bin (int) values - dynamic array of x . y elements
 	std::vector<std::vector<int>> _bins;
@@ -37,11 +39,15 @@ private:
 	// holds if the VAO has been generated
 	bool _isInit = false;
 
-	int _binY;
+	int _binY, _binX;
 
 	GLfloat colour1[3] = { 0.0f, 0.0f, 0.0f };
 	GLfloat colour2[3] = { 1.0f, 0.54902f, 0.0f };
 
 	glm::vec2 _min;
 	glm::vec2 _max;
+
+	LogFile* lf;
+
+	void Initialise();
 };

@@ -45,4 +45,7 @@ private:
 		{ 1.0f, 0.411765f, 0.705882f }, // pink
 		{ 0.698039f, 0.133333f, 0.133333f } // brick red
 	};
+
+	glm::vec2 _currentMin;
+	glm::vec2 _currentMax;
 };
