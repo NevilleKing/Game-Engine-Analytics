@@ -154,9 +154,32 @@ GLfloat * Histogram::getBinColour(int binValue)
 	// 0 - 1 based on bin value
 	GLfloat val = (GLfloat)binValue / (GLfloat)_maxBinValue;
 
-	GLfloat r = val;
-	GLfloat g = 0;
-	GLfloat b = 1 - val;
+	GLfloat splitter = 1.0f / NUM_COLOURS;
+
+	// loop through to see what colours to interpolate between
+	int colourIndex = 0;
+	while (true)
+	{
+		if (val >= (colourIndex * splitter) && val <= (colourIndex * splitter) + splitter || colourIndex >= NUM_COLOURS - 1)
+			break;
+		colourIndex++;
+	}
+
+	GLfloat r, g, b;
+
+	if (colourIndex >= NUM_COLOURS - 1)
+	{
+		r = colours[NUM_COLOURS - 1][0];
+		g = colours[NUM_COLOURS - 1][1];
+		b = colours[NUM_COLOURS - 1][2];
+	}
+	else
+	{
+		// using algorithm from http://stackoverflow.com/questions/13488957/interpolate-from-one-color-to-another
+		r = (colours[colourIndex + 1][0] - colours[colourIndex][0]) * val + colours[colourIndex][0];
+		g = (colours[colourIndex + 1][1] - colours[colourIndex][1]) * val + colours[colourIndex][1];
+		b = (colours[colourIndex + 1][2] - colours[colourIndex][2]) * val + colours[colourIndex][2];
+	}
 
 	GLfloat returnVal[] = { r, g, b };
 	return returnVal;

@@ -37,4 +37,7 @@ private:
 	GLfloat* getBinColour(int binValue);
 
 	int _binY;
+
+	const int NUM_COLOURS = 5;
+	const GLfloat colours[5][3] = { { 0, 0, 1 }, { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 0 }, { 1, 0, 0 } };
 };
