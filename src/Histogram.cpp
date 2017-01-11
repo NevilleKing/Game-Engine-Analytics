@@ -127,10 +127,13 @@ void Histogram::render(GLuint colorLocation)
 	{
 		glBindVertexArray(_vertextArrayObject);
 
+		GLfloat color1[] = { 0.0f, 0.0f, 0.0f };
+		GLfloat color2[] = { 1.0f, 0.54902f, 0.0f };
+
 		int binIndex = 0;
 		for (int i = 0; i < _vertexData.size(); i += 6)
 		{
-			GLfloat* color = getBinColour(_bins[binIndex / _binY][binIndex % _binY]);
+			GLfloat* color = getBinColour(_bins[binIndex / _binY][binIndex % _binY], color1, color2);
 			glUniform3f(colorLocation, color[0], color[1], color[2]);
 			glDrawArrays(GL_TRIANGLES, i, 12);
 			binIndex++;
@@ -140,46 +143,16 @@ void Histogram::render(GLuint colorLocation)
 	}
 }
 
-GLfloat * Histogram::getBinColour(int binValue)
+GLfloat * Histogram::getBinColour(int binValue, GLfloat colour1[3], GLfloat colour2[3])
 {
-	/*
-		Colour mapping : http://stackoverflow.com/questions/12875486/what-is-the-algorithm-to-create-colors-for-a-heatmap
-		0    : blue   rgb(0, 0, 1)
-		0.25 : cyan   rgb(0, 1, 1)
-		0.5  : green  rgb(0, 1, 0)
-		0.75 : yellow rgb(1, 1, 0)
-		1    : red    rgb(1, 0, 0)
-	*/
-
 	// 0 - 1 based on bin value
 	GLfloat val = (GLfloat)binValue / (GLfloat)_maxBinValue;
 
-	GLfloat splitter = 1.0f / NUM_COLOURS;
-
-	// loop through to see what colours to interpolate between
-	int colourIndex = 0;
-	while (true)
-	{
-		if (val >= (colourIndex * splitter) && val <= (colourIndex * splitter) + splitter || colourIndex >= NUM_COLOURS - 1)
-			break;
-		colourIndex++;
-	}
-
 	GLfloat r, g, b;
-
-	if (colourIndex >= NUM_COLOURS - 1)
-	{
-		r = colours[NUM_COLOURS - 1][0];
-		g = colours[NUM_COLOURS - 1][1];
-		b = colours[NUM_COLOURS - 1][2];
-	}
-	else
-	{
-		// using algorithm from http://stackoverflow.com/questions/13488957/interpolate-from-one-color-to-another
-		r = (colours[colourIndex + 1][0] - colours[colourIndex][0]) * val + colours[colourIndex][0];
-		g = (colours[colourIndex + 1][1] - colours[colourIndex][1]) * val + colours[colourIndex][1];
-		b = (colours[colourIndex + 1][2] - colours[colourIndex][2]) * val + colours[colourIndex][2];
-	}
+	// using algorithm from http://stackoverflow.com/questions/13488957/interpolate-from-one-color-to-another
+	r = (colour2[0] - colour1[0]) * val + colour1[0];
+	g = (colour2[1] - colour1[1]) * val + colour1[1];
+	b = (colour2[2] - colour1[2]) * val + colour1[2];
 
 	GLfloat returnVal[] = { r, g, b };
 	return returnVal;

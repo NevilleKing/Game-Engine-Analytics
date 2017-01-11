@@ -34,10 +34,7 @@ private:
 	bool _isInit = false;
 
 	// returns a colour value based on the value and the max bin value
-	GLfloat* getBinColour(int binValue);
+	GLfloat* getBinColour(int binValue, GLfloat colour1[3], GLfloat colour2[3]);
 
 	int _binY;
-
-	const int NUM_COLOURS = 5;
-	const GLfloat colours[5][3] = { { 0, 0, 1 }, { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 0 }, { 1, 0, 0 } };
 };
