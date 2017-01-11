@@ -18,6 +18,8 @@ public:
 private:
 	void Initialise();
 
+	void allocateVertexBufferObject(GLsizeiptr size, const GLvoid* data);
+
 	std::vector<Histogram> _heatmaps;
 
 	GLuint _positionLocation;

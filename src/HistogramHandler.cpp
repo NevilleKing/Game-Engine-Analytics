@@ -48,12 +48,12 @@ void HistogramHandler::Initialise()
 
 		glGenBuffers(1, &VDBO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, VDBO);
-		glBufferData(GL_ARRAY_BUFFER, _heatmaps[0].getVertexDataBufferSize(), _heatmaps[0].getVertexData(), GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		_vertextBufferObject = VDBO;
+
+		allocateVertexBufferObject(_heatmaps[0].getVertexDataBufferSize(), _heatmaps[0].getVertexData());
+
 		std::cout << "vertexDataBufferObject created OK! GLUint is: " << VDBO << std::endl;
 
-		_vertextBufferObject = VDBO;
 
 		// Vertex Array Object
 
@@ -79,4 +79,11 @@ void HistogramHandler::Initialise()
 
 		_vertextArrayObject = VAO;
 	}
+}
+
+void HistogramHandler::allocateVertexBufferObject(GLsizeiptr size, const GLvoid * data)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, _vertextBufferObject);
+	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

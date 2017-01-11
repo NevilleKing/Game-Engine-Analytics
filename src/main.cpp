@@ -373,23 +373,23 @@ GLuint initializeVertexBuffer(LogFile* lf)
 // end::initializeVertexBuffer[]
 
 // tag::loadAssets[]
+void addHistogram(LogFile* lf)
+{
+	heatmaps->addHistogram(lf, 10, 5);
+}
+
 void loadAssets()
 {
 	initializeProgram(); //create GLSL Shaders, link into a GLSL program, and get IDs of attributes and variables
+	
+	heatmaps = new HistogramHandler(positionLocation, colorLocation);
 
 	// loop through and create all the vetex objects
 	for (auto lf : logFiles)
 	{
 		GLuint VBO = initializeVertexBuffer(lf); //load data into a vertex buffer
 		initializeVertexArrayObject(VBO);
-	}
-
-	heatmaps = new HistogramHandler(positionLocation, colorLocation);
-
-	// create the histogram for the fist set of data
-	if (logFiles.size() > 0)
-	{
-		heatmaps->addHistogram(logFiles[0], 10, 5);
+		addHistogram(lf);
 	}
 
 	cout << "Loaded Assets OK!\n";
@@ -405,6 +405,8 @@ void handleDropEvent(char* filePath)
 	LogFile* lf = handleLogFileLoad(filePath);
 	GLuint VAO = initializeVertexBuffer(lf); //load data into a vertex buffer
 	initializeVertexArrayObject(VAO);
+
+	addHistogram(lf);
 }
 
 void zoomIn()
