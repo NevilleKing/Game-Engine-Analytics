@@ -156,7 +156,7 @@ GLfloat * Histogram::getBinColour(int binValue)
 
 	GLfloat r = val;
 	GLfloat g = 0;
-	GLfloat b = 0;
+	GLfloat b = 1 - val;
 
 	GLfloat returnVal[] = { r, g, b };
 	return returnVal;
