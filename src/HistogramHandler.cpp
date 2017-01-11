@@ -38,10 +38,16 @@ void HistogramHandler::addHistogram(LogFile* logFile)
 			lfMax.y > _currentMax.y ||
 			lfMax.x > _currentMax.x)
 		{
-			_currentMin = logFile->getMin();
-			_currentMax = logFile->getMax();
+			if (lfMin.x < _currentMin.x)
+				_currentMin.x = lfMin.x;
+			if (lfMin.y < _currentMin.y)
+				_currentMin.y = lfMin.y;
+			if (lfMax.y > _currentMax.y)
+				_currentMax.y = lfMax.y;
+			if (lfMax.x > _currentMax.x)
+				_currentMax.x = lfMax.x;
 
-			_heatmaps.push_back(new Histogram(logFile, _binX, _binY));
+			_heatmaps.push_back(new Histogram(logFile, _binX, _binY, _currentMin, _currentMax));
 			// update buffer
 			GLint _currentVertexByteSize = _heatmaps.back()->getVertexDataBufferSize();
 			allocateVertexBufferObject(_currentVertexByteSize, _heatmaps.back()->getVertexData());
@@ -49,7 +55,7 @@ void HistogramHandler::addHistogram(LogFile* logFile)
 			// update other heatmaps
 			for (int i = 0; i < _heatmaps.size() - 1; i++) // miss last one
 			{
-				_heatmaps[i]->recalculate(lfMin, lfMax);
+				_heatmaps[i]->recalculate(_currentMin, _currentMax);
 			}
 		}
 		else

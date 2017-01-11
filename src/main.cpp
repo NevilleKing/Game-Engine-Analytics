@@ -382,7 +382,7 @@ void loadAssets()
 {
 	initializeProgram(); //create GLSL Shaders, link into a GLSL program, and get IDs of attributes and variables
 	
-	heatmaps = new HistogramHandler(positionLocation, colorLocation, 20, 40);
+	heatmaps = new HistogramHandler(positionLocation, colorLocation, 5, 5);
 
 	// loop through and create all the vetex objects
 	for (auto lf : logFiles)
