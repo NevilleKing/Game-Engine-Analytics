@@ -49,7 +49,7 @@ void HistogramHandler::Initialise()
 		glGenBuffers(1, &VDBO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VDBO);
-		glBufferData(GL_ARRAY_BUFFER, _heatmaps[0]._vertexData.size() * sizeof(&_heatmaps[0]._vertexData[0]), &_heatmaps[0]._vertexData[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, _heatmaps[0].getVertexDataBufferSize(), _heatmaps[0].getVertexData(), GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		std::cout << "vertexDataBufferObject created OK! GLUint is: " << VDBO << std::endl;
 
