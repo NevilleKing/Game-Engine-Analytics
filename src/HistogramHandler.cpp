@@ -25,7 +25,7 @@ void HistogramHandler::addHistogram(LogFile* logFile)
 		_heatmaps.back()->setColours(_quadColours[_heatmaps.size() - 1]);
 		Initialise();
 		_currentMin = logFile->getMin();
-		_currentMin = logFile->getMax();
+		_currentMax = logFile->getMax();
 	}
 	else
 	{		
@@ -38,6 +38,9 @@ void HistogramHandler::addHistogram(LogFile* logFile)
 			lfMax.y > _currentMax.y ||
 			lfMax.x > _currentMax.x)
 		{
+			_currentMin = logFile->getMin();
+			_currentMax = logFile->getMax();
+
 			_heatmaps.push_back(new Histogram(logFile, _binX, _binY));
 			// update buffer
 			GLint _currentVertexByteSize = _heatmaps.back()->getVertexDataBufferSize();
