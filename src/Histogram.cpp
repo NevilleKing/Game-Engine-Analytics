@@ -15,7 +15,7 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
 
 	// get max and min from the log file
 	glm::vec2 max = logFile->getMax();
-	glm::vec2 min = logFile->getMin();
+	glm::vec2 min = logFile->getMin();	
 
 	// find the ranges
 	float rangeX = max.x - min.x;
@@ -25,23 +25,27 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
 	float binWidth = rangeX / (float)binX;
 	float binHeight = rangeY / (float)binY;
 
+	int sorted = 0, unsorted = 0;
+
 	// loop through the data from the log file and sort into the bins
 	for (auto point : logFile->getData())
 	{
+		int cachedSort = sorted;
 		// hold the current bin value
 		glm::vec2 currentPosition(0, 0);
 		while (currentPosition.y < binY)
 		{
-			if ((currentPosition.x * binWidth) <= point.x &&
-				(currentPosition.x * binWidth) + binWidth >= point.x &&
-				(currentPosition.y * binHeight) <= point.y &&
-				(currentPosition.y * binHeight) + binHeight >= point.y)
+			if (min.x + (currentPosition.x * binWidth) <= point.x &&
+				min.x + (currentPosition.x * binWidth) + binWidth >= point.x &&
+				min.y + (currentPosition.y * binHeight) <= point.y &&
+				min.y + (currentPosition.y * binHeight) + binHeight >= point.y)
 			{
 				// in current bin
 				_bins[(int)currentPosition.x][(int)currentPosition.y]++;
 				int newBinValue = _bins[(int)currentPosition.x][(int)currentPosition.y];
 				if (newBinValue > _maxBinValue)
 					_maxBinValue = newBinValue;
+				sorted++;
 				break;
 			}
 
@@ -52,6 +56,8 @@ Histogram::Histogram(LogFile * logFile, const int binX, const int binY)
 				currentPosition.y++;
 			}
 		}
+		if (sorted == cachedSort)
+			unsorted++;
 	}
 
 	// calculate the vertex data points for each of the bins
