@@ -24,3 +24,6 @@ The program supports up to 5 log files at one time, with each having a different
 ## Command Line Parameters
 - `--binX [int]` - The number of bins for the heatmap on the x-axis
 - `--binY [int]` - The number of bins for the heatmap on the y-axis
+
+## Generating an sln
+To generate the project files (sln) run the auto.bat file. This requires cmake and conan to be installed on the machine.
