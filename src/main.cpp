@@ -600,15 +600,15 @@ void loadFiles(int argCount, char* args[])
 		if (logPath == "--binX")
 		{
 			binX = atoi(args[++i]);
-			i++;
 		}
 		else if (logPath == "--binY")
 		{
 			binY = atoi(args[++i]);
-			i++;
 		}
-		
-		handleLogFileLoad(logPath);
+		else
+		{
+			handleLogFileLoad(logPath);
+		}
 	}
 }
 
