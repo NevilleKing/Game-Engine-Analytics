@@ -1,8 +1,9 @@
 # Battery Collector Analytics Tool
+![analyticsprogram](https://user-images.githubusercontent.com/9254173/28645441-6942c68c-7255-11e7-92dc-2a0ade52b2a4.png)
 
 This tool is used to visualise, by way of trajectories and heatmaps, player movements and locations of battery pickups from the Battery Collector game.
 
-##Log Files
+## Log Files
 2 Log files are provided:
 - player_location.log - An example of player position data
 - battery_location.log - An example of battery collection information
